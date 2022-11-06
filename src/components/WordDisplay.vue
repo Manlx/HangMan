@@ -25,4 +25,8 @@ export default {
         align-content: center;
         font-family: 'Roboto', sans-serif;
     }
+    
+    h1{
+        transition: 2s;
+    }
 </style>

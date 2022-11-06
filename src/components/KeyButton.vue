@@ -1,24 +1,31 @@
 <template>
-    <div :class="{Hoverable:!this.disabled,KeyButton:true,disabled:this.disabled}" @click.self="Clicked()">
+    <div :class="{Hoverable:!this.disabled,KeyButton:true,disabled:this.disabled,correct:(this.disabled && this.correct),disabled:this.disabled,incorrect:(this.disabled && !this.correct)}" @click.self="Clicked()">
         {{this.ButtonDisplay}}
     </div>
 </template>
 
 <script>
 export default {
-    props:["ButtonDisplay"],
+    props:["ButtonDisplay","ID"],
     data:function(){
         return {
-            Word:"Green",
-            disabled:false
+            disabled:false,
+            // warning:false,
+            correct:false
         }
     },
     methods:{
         Clicked:function(){
+            if (this.disabled)
+                return;
+            this.$emit("clicked",this.ButtonDisplay,this.ID,false);
             this.disabled = true;
-            this.$emit("Clicked",this.ButtonDisplay);
-            // $(".KeyButton").toggleClass("Hoverable");
-            // $(".KeyButton").toggleClass("disabled");
+        },
+        Echo:function(){
+            alert(this.ID)
+        },
+        helloWorld:function(){
+            alert("Hello World")
         }
     }
 }
@@ -52,5 +59,15 @@ export default {
         box-shadow: 0px 0px 5px 5px #676767;
         scale: 0.8;
         background: #676767;
+    }
+
+    .incorrect{
+        background-color: firebrick;
+        box-shadow: 0px 0px 5px 5px rgb(153, 30, 30);
+    }
+
+    .correct{
+        background-color: purple;
+        box-shadow: 0px 0px 5px 5px darkorchid;
     }
 </style>
