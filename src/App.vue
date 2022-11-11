@@ -6,7 +6,7 @@
       <div class="flexCenter">
         <hang-man-image :DisplayText="`Lives Remaining: ${this.LivesRemaining}`" :dispImage="`./resources/images/${this.DisplayImageUrl}`" />
         <div class="ButtonGrid">
-          <div v-for="value,index in this.Alpha" :key="index" class="flexCenter">
+          <div v-for="value,index in this.Alpha" :key="index" class="flexCenter" ref="BDHolder">
             <key-button :ref="`BD`" :ID="index" :ButtonDisplay="value" @clicked="ButtonClicked" />
           </div>
         </div>
@@ -20,7 +20,8 @@
 
 <script>
 const maxImages = 11;
-console.log(maxImages)
+// console.log('Z'-'A')
+// console.log(maxImages)
 function fillBlanks(char,blanks,answer){
   let Arr= blanks.split(" ")
   let Out = ""
@@ -48,7 +49,8 @@ export default{
   components: { KeyButton, WordDisplay, WordLengthComp, HangManImage, GameOverScreen },
   data:function(){
     return {
-      Alpha: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(""),
+      // Alpha: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(""),
+      Alpha: ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],
       DisplayingWord:"",
       AllWords:[],
       FilteredWords:[],
@@ -62,11 +64,14 @@ export default{
       DisplayStep: 0,
       gameOver:true,
       Winner:false,
-      gameOverMessage:"Well done"
+      gameOverMessage:"Well done",
+      NumHints:2,
+      hasHint:false
     }
   },
   methods:{
     ButtonClicked:function(Char,ID){
+      // console.log(this.$refs)
       this.$refs.BD[ID].correct = this.ChosenWord.includes(Char)
       if (this.$refs.BD[ID].correct)
       {
@@ -90,8 +95,8 @@ export default{
           this.gameOver = true;
           this.gameOverMessage = "oof Gett'em next time";
         }
-          
       }
+      // this.revealValue()
     },
 
     getWords:async function(){
@@ -133,16 +138,31 @@ export default{
         self.ChosenWord = self.FilteredWords[Math.trunc(Math.random()*self.FilteredWords.length)].toUpperCase();
         self.Step = Math.trunc(maxImages/self.LivesRemaining);
         self.gameOver = false;
+        // self.revealValue()
         console.log(self.ChosenWord)
       })
     },
-
+    revealValue:function(){
+      for (let i = 0;i < this.NumHints;i++)
+      {
+        // console.log(this.ChosenWord.charCodeAt(Math.trunc(Math.random()*this.ChosenWord.length)) - 'A'.charCodeAt(0));
+        let val = this.ChosenWord.charCodeAt(Math.trunc(Math.random()*this.ChosenWord.length)) - 'A'.charCodeAt(0);
+        this.$refs.BD[val].Clicked();
+      }
+      this.hasHint = true;
+    },
     playAgainClicked:function(){
       this.init(this.WLStartValue);
     }
   },
   created:function(){
     this.init(this.WLStartValue);
+  },
+  updated:function(){
+    // console.log(this.$refs)
+    if (!this.hasHint)
+      this.revealValue()
+    // console.log(this.Alpha)
   }
 }
 </script>
