@@ -66,7 +66,8 @@ export default{
       Winner:false,
       gameOverMessage:"Well done",
       NumHints:2,
-      hasHint:false
+      hasHint:false,
+      resetButtons:false
     }
   },
   methods:{
@@ -131,14 +132,20 @@ export default{
     init:function(WL)
     {
       let self = this;
+      this.hasHint = false;
+      this.resetButtons = false;
       this.getWords().then(function(data){
         self.AllWords = data;
         self.filterWords(WL);
         self.generateDisplayWord(WL)
+        
         self.ChosenWord = self.FilteredWords[Math.trunc(Math.random()*self.FilteredWords.length)].toUpperCase();
         self.Step = Math.trunc(maxImages/self.LivesRemaining);
         self.gameOver = false;
         // self.revealValue()
+        self.DisplayStep = 0;
+        self.DisplayImageUrl = `${self.DisplayStep}.png`;
+        self.LivesRemaining = 5;
         console.log(self.ChosenWord)
       })
     },
@@ -153,6 +160,13 @@ export default{
     },
     playAgainClicked:function(){
       this.init(this.WLStartValue);
+    },
+    resetbuttons:function(){
+      for (let i = 0;i < this.$refs.BD.length;i++)
+      {
+        this.$refs.BD[i].disabled = false;
+        this.$refs.BD[i].correct = false;
+      }
     }
   },
   created:function(){
@@ -163,6 +177,11 @@ export default{
     if (!this.hasHint)
       this.revealValue()
     // console.log(this.Alpha)
+    if (!this.resetButtons)
+    {
+      this.resetButtons = true;
+      this.resetbuttons();
+    }
   }
 }
 </script>
